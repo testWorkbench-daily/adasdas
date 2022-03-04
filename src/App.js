@@ -1,8 +1,8 @@
-import Home from './compoments/home/index.jsx'
+import Fun from "./Fun";
 function App() {
   return (
     <div className="App">
-      <Home/>
+      <Fun  name="yang" age={19}/>
     </div>
   );
 }
