@@ -4,87 +4,86 @@ import './index.css'
 class Lift extends Component {
     state = {
         arr: [],
-        fal: true,
-        data: 0,
+        arr2: [],
+        controller: true,
+        controller2: false,
+
     }
 
 
 
     componentDidMount() {
+        // 模拟信息更新
         this.time1 = setInterval(() => {
-            const { arr } = this.state
+            const { arr ,arr2} = this.state
             const newArr = '日志信息' + (arr.length + 1)
             this.setState({
-                arr: [...arr, newArr]
+                
+                arr: [...arr, newArr],
+                arr2: [newArr,...arr2]
             })
         }, 500);
-
-
     }
     getSnapshotBeforeUpdate() {
-        const { div } = this.refs
+        const { div2 } = this.refs
 
-        return div.scrollHeight
+        return div2.scrollHeight
     }
 
 
     componentDidUpdate(prePost, preState, Height) {
-        const { div } = this.refs
-        const { fal, a } = this.state
+        const { div ,div2} = this.refs
+        const { controller, controller2 } = this.state
+        //案例一默认： 滚轮为底部
+        if (controller) div.scrollTop = div.scrollHeight;
 
+        if(controller2)  div2.scrollTop  += div2.scrollHeight - Height
+        
 
-        if (fal) {
-
-            div.scrollTop = div.scrollHeight;
-
-
-        } else {
-            console.log(div.clientHeight);
-            div.scrollTop += div.scrollHeight - Height - 20
-
+       
+        if (this.state.arr.length === 40) {
+            clearInterval(this.time1)
         }
-
-
     }
     componentWillUnmount() {
         clearInterval(this.time1)
     }
 
+    // 滚轮事件 
     DataUp = () => {
-
-
-        const { div } = this.refs
-        if (div.scrollTop + div.clientHeight < div.scrollHeight) {
-            // console.log('非底部');
-            this.setState({
-                fal: false  
-
-            })
-        } else {
-            // console.log('底部');
-            this.setState({
-                fal: true
-            })
-
-        }
-
+        const {div,div2} = this.refs
+        console.log();
+    this.setState({
+        
+        controller: div.scrollTop + div.clientHeight < div.scrollHeight ? false : true ,
+        controller2 : div2.scrollTop == 0 ?false : true 
+    })
     }
 
     render() {
-        if (this.state.arr.length === 40) {
-            clearInterval(this.time1)
-        }
+       
 
-        const { arr } = this.state
+        const { arr ,arr2} = this.state
         return (
-            <div className='Box' ref="div" onScroll={this.DataUp}>
+            <>
+                <h1>案例一</h1>
+                <div className='Box' ref="div" onScroll={this.DataUp}>
+                    {
+                        arr.map((item, index) => {
+                            return <li className="List" key={index}>{item}</li>
+                        })
+                    }
+                </div>
+                <h1>案例二</h1>
+                <div className='Box' ref="div2" onScroll={this.DataUp}>
+                    {
+                        arr2.map((item, index) => {
+                            return <li className="List" key={index}>{item}</li>
+                        })
+                    }
+                </div>
+            </>
 
-                {
-                    arr.map((item, index) => {
-                        return <li className="List" key={index}>{item}</li>
-                    })
-                }
-            </div>
         )
     }
 }
